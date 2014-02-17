@@ -7,7 +7,10 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <crypt.h>
+#include <string.h>
 #include <pwd.h>
 
 #ifdef NEED_SHADOW
