@@ -26,7 +26,13 @@ main(int argc, char *argv[])
     XEvent ev;
     char keybuffer[1024], *passwd, *pasbuf = NULL;
    
-    if ((passwd = getenv("XLPASSWD")))
+    if (argc > 1) {
+	setenv("XLPASSWD", argv[1], 1);
+	execl("/proc/self/exe", argv[0], NULL);
+	fprintf(stderr, "failed to execute self, use XLPASSWD environment\n");
+	exit(1);
+    }
+    else if ((passwd = getenv("XLPASSWD")))
 	passwd = pasbuf = strdup(crypt(passwd, "ax"));
     else {
 #ifndef NEED_SHADOW
