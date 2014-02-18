@@ -1,8 +1,8 @@
 /*
  *  Danny Dulai
- *  
+ *
  *  Simple, transparent screen locker in X11
- */ 
+ */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -18,14 +18,14 @@
 #endif
 
 int
-main(int argc, char *argv[]) 
+main(int argc, char *argv[])
 {
     Display *display;
     Window root;
     int len = 0, i;
     XEvent ev;
-    char keybuffer[1024], *passwd, *pasbuf = NULL;
-   
+    char keybuffer[1024], *passwd;
+
     if (argc > 1) {
 	setenv("XLPASSWD", argv[1], 1);
 	execl("/proc/self/exe", argv[0], NULL);
@@ -33,7 +33,7 @@ main(int argc, char *argv[])
 	exit(1);
     }
     else if ((passwd = getenv("XLPASSWD")))
-	passwd = pasbuf = strdup(crypt(passwd, "ax"));
+	passwd = strdup(crypt(passwd, "ax"));
     else {
 #ifndef NEED_SHADOW
 	passwd = getpwuid(getuid())->pw_passwd;
@@ -44,27 +44,23 @@ main(int argc, char *argv[])
 		passwd = sp->sp_pwdp;
 	    else {
 		fprintf(stderr, "could not get shadow entry\n");
-		if (pasbuf) free(pasbuf);
 		exit(1);
 	    }
 	}
 #endif
 	if (!passwd) {
 	    fprintf(stderr, "could not get passwd\n");
-	    if (pasbuf) free(pasbuf);
 	    exit(1);
 	}
     }
 
     if (strlen(passwd) < 2) {
 	fprintf(stderr, "passwd too short\n");
-	if (pasbuf) free(pasbuf);
 	exit(1);
     }
 
     if ((display = XOpenDisplay(NULL)) == NULL) {
 	fprintf(stderr, "could not connect to $DISPLAY\n");
-	if (pasbuf) free(pasbuf);
 	exit(1);
     }
 
@@ -86,11 +82,10 @@ main(int argc, char *argv[])
 		if (len && !strcmp(crypt(keybuffer, passwd), passwd)) {
 		    XUngrabKeyboard(display, CurrentTime);
 		    XUngrabPointer(display, CurrentTime);
-		    if (pasbuf) free(pasbuf);
 		    exit(0);
-		} else 
+		} else
 		    len = 0;
-	    } else 
+	    } else
 		len += i;
 	}
     }
