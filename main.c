@@ -24,7 +24,7 @@ main(int argc, char *argv[])
     Window root;
     int len = 0, i;
     XEvent ev;
-    char keybuffer[1024], *passwd;
+    char keybuffer[256], *passwd;
 
     if (argc > 1) {
 	setenv("XLPASSWD", argv[1], 1);
